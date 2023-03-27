@@ -13,14 +13,24 @@ from json import JSONEncoder
 from rembg import remove
 import pickle
 
+IMG_SIZE=100
+
 
 def get_image(image_path):
     image = cv2.imread(image_path)
-    image = remove(image)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    return image
+    w = image.shape[1]
+    new_w = IMG_SIZE
+    new_h = int(image.shape[0]/(image.shape[1]/IMG_SIZE))
+    
+    new_image=cv2.resize(image,(new_w,new_h))
+    new_image = remove(new_image)
+    new_image = cv2.cvtColor(new_image, cv2.COLOR_BGR2RGB)
+    return new_image
+
+
 def RGB2HEX(color):
     return "#{:02x}{:02x}{:02x}".format(int(color[0]), int(color[1]), int(color[2]))
+
 
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
@@ -37,18 +47,7 @@ def extract_features(path, img, split_tup):
         f = open(json_path)
         json_details = json.load(f)
         hsl_color_values = json_details["hsl_color_values"]
-        has_high_hsl = False
-        for hsl in hsl_color_values:
-            if hsl[1] > 0.5:
-                has_high_hsl = True
-                
-        if has_high_hsl and split_tup[0].startswith("plastic"):
-            return hsl_color_values
-        else:
-            if not has_high_hsl:
-                return hsl_color_values
-            else:
-                return []
+        return hsl_color_values
     else:
         image = get_image(image_path)
         number_of_colors = 10
@@ -101,3 +100,6 @@ def predict(path, img):
         return prediction[0]
     else:
         print("The image file is not JPG file")
+        
+
+print(predict("./", "test.jpg"))
