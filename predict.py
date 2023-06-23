@@ -54,7 +54,7 @@ def extract_features(path, img, split_tup):
         modified_image = image.reshape(image.shape[0]*image.shape[1], 3)
         nobg_image = remove(modified_image)
         clf = KMeans(n_clusters = number_of_colors)
-        labels = clf.fit_predict(modified_image)
+        labels = clf.fit_predict(nobg_image)
         
         counts = Counter(labels)
 
@@ -85,7 +85,7 @@ def extract_features(path, img, split_tup):
         return hsl_color_values
 
 # Load the pre-trained SVM model from the .sav file
-model = joblib.load('color_svm.sav')
+model = joblib.load('saved_model/color_svm.sav')
 
 # Define a function to make predictions using the pre-trained model
 def predict(path, img):
