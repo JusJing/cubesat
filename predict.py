@@ -85,7 +85,7 @@ def extract_features(path, img, split_tup):
         return hsl_color_values
 
 # Load the pre-trained SVM model from the .sav file
-model = joblib.load('color_svm.sav')
+model = joblib.load('saved_model/color_svm.sav')
 
 # Define a function to make predictions using the pre-trained model
 def predict(path, img):
